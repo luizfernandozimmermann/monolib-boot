@@ -1,0 +1,17 @@
+package br.com.pokedexerp.platform.authentication.handler.dto;
+
+import br.com.pokedexerp.platform.authentication.model.UserSessionDto;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class RefreshSessionOutput {
+
+    private SessionInfo session;
+
+    public RefreshSessionOutput(UserSessionDto session) {
+        this.session = new SessionInfo(session);
+    }
+
+}

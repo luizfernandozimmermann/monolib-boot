@@ -1,0 +1,8 @@
+{
+    "roles": [
+        "ADMIN", "USER"
+    ],
+    "permissions": [
+
+    ]
+}
