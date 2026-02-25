@@ -26,6 +26,12 @@ jobs:
         server-id: github
         settings-path: ${{ github.workspace }}
 
+    - name: Set version from tag
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        VERSION=${VERSION#v}
+        mvn versions:set -DnewVersion=$VERSION
+
     - name: Commit version update
       run: |
         git config user.name "github-actions"
@@ -37,12 +43,6 @@ jobs:
         git push origin master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Set version from tag
-      run: |
-        VERSION=${GITHUB_REF#refs/tags/}
-        VERSION=${VERSION#v}
-        mvn versions:set -DnewVersion=$VERSION
 
     - name: Publish
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
