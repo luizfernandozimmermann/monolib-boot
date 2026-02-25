@@ -36,3 +36,11 @@ jobs:
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Commit version update
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add pom.xml
+        git commit -m "chore: bump version to $VERSION"
+        git push
