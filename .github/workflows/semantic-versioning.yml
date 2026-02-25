@@ -11,8 +11,12 @@ permissions:
 
 jobs:
   release:
+    name: Release
     runs-on: ubuntu-latest
-
+    outputs:
+      version: ${{ steps.format_version.outputs.version }}
+      preview_version: ${{ steps.format_version.outputs.preview_version }}
+      version_tag: ${{ steps.version.outputs.version_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,15 +33,34 @@ jobs:
           patch_pattern: "^fix"
           format: "${major}.${minor}.${patch}"
 
+      - name: Format Versions
+        id: format_version
+        env:
+          BASE_VERSION: ${{ steps.version.outputs.version }}
+          INCREMENT: ${{ steps.version.outputs.increment }}
+          MAJOR: ${{ steps.version.outputs.major }}
+          MINOR: ${{ steps.version.outputs.minor }}
+          PATCH: ${{ steps.version.outputs.patch }}
+        run: |          
+          # Package versions
+          echo "version=$BASE_VERSION" >> $GITHUB_OUTPUT
+          
+          # Preview version includes the increment as a preview suffix
+          PREVIEW_VERSION="${BASE_VERSION}-preview$(printf '%02d' $INCREMENT)"
+          echo "preview_version=$PREVIEW_VERSION" >> $GITHUB_OUTPUT
+          
+          echo "Release version: $BASE_VERSION"
+          echo "Preview version: $PREVIEW_VERSION"
+
       - name: Create tag
         run: |
-          git tag v${{ steps.version.outputs.version }}
-          git push origin v${{ steps.version.outputs.version }}
+          git tag ${{ steps.version.outputs.version_tag }}
+          git push origin ${{ steps.version.outputs.version_tag }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.version.outputs.version }}
+          tag_name: ${{ steps.version.outputs.version }}
           generate_release_notes: true
 
       - uses: actions/checkout@v4
@@ -45,6 +68,11 @@ jobs:
           ref: master
           fetch-depth: 0
 
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
@@ -57,7 +85,7 @@ jobs:
         run: |
           mvn versions:set-property \
             -Dproperty=revision \
-            -DnewVersion=${{ steps.version.outputs.version }} \
+            -DnewVersion=${{ needs.build.outputs.version }} \
             -DgenerateBackupPoms=false
 
       - name: Commit version update
@@ -67,7 +95,7 @@ jobs:
           git checkout master
           git pull origin master
           git add pom.xml
-          git commit -m "chore: bump version to $VERSION"
+          git commit -m "chore: bump version to ${{ needs.build.outputs.version }}"
           git push origin master
 
       - name: Publish
