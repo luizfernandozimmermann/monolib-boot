@@ -26,6 +26,18 @@ jobs:
         server-id: github
         settings-path: ${{ github.workspace }}
 
+    - name: Commit version update
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+
+        git add pom.xml
+        git commit -m "chore: bump version to $VERSION" || echo "No changes"
+
+        git push origin master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Set version from tag
       run: |
         VERSION=${GITHUB_REF#refs/tags/}
@@ -36,11 +48,3 @@ jobs:
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
-
-    - name: Commit version update
-      run: |
-        git config user.name "github-actions"
-        git config user.email "github-actions@github.com"
-        git add pom.xml
-        git commit -m "chore: bump version to $VERSION"
-        git push
