@@ -1,29 +1,31 @@
-name: Release
+name: Publish Package
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js (se precisar)
-        uses: actions/setup-node@v3
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          node-version: '18'
+          distribution: temurin
+          java-version: '25'
+          server-id: github
+          settings-path: ${{ github.workspace }}
 
-      - name: semantic-release
-        uses: cycjimmy/semantic-release-action@v3
-        with:
-          extra_plugins: |
-            @semantic-release/changelog
-            @semantic-release/git
-            @semantic-release/github
+      - name: Build and Deploy
+        run: mvn -B clean deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
