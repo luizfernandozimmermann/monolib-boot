@@ -6,7 +6,7 @@
 
     <groupId>dev.zimmermann.monolib</groupId>
     <artifactId>monolib-boot</artifactId>
-    <version>0.0.6</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
         <module>monolib-boot-core</module>

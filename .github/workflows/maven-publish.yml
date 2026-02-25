@@ -33,7 +33,10 @@ jobs:
       run: |
         VERSION=${GITHUB_REF#refs/tags/}
         VERSION=${VERSION#v}
-        mvn versions:set -DnewVersion=$VERSION
+        mvn versions:set-property \
+          -Dproperty=revision \
+          -DnewVersion=$VERSION \
+          -DgenerateBackupPoms=false
 
     - name: Commit version update
       run: |
