@@ -6,7 +6,7 @@
     <parent>
         <groupId>dev.zimmermann.monolib</groupId>
         <artifactId>monolib-boot</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>monolib-boot-web</artifactId>

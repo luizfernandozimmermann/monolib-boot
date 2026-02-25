@@ -6,7 +6,7 @@
     <parent>
         <groupId>dev.zimmermann.monolib</groupId>
         <artifactId>monolib-boot</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>monolib-boot-web-ready</artifactId>
@@ -15,12 +15,12 @@
         <dependency>
             <groupId>dev.zimmermann.monolib</groupId>
             <artifactId>monolib-boot-web</artifactId>
-            <version>${parent.version}</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>dev.zimmermann.monolib</groupId>
             <artifactId>monolib-boot-data</artifactId>
-            <version>${parent.version}</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>dev.zimmermann.monolib</groupId>
             <artifactId>monolib-boot-auth</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

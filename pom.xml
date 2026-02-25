@@ -6,7 +6,7 @@
 
     <groupId>dev.zimmermann.monolib</groupId>
     <artifactId>monolib-boot</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
         <module>monolib-boot-core</module>
@@ -19,6 +19,7 @@
     </modules>
 
     <properties>
+        <revision>1.0.0-SNAPSHOT</revision>
         <java.version>25</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
