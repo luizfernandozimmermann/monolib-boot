@@ -30,8 +30,7 @@ jobs:
           tag_prefix: "v"
           major_pattern: "BREAKING CHANGE|!:"
           minor_pattern: "^feat"
-          patch_pattern: "^fix"
-          format: "${major}.${minor}.${patch}"
+          version_format: "${major}.${minor}.${patch}"
 
       - name: Format Versions
         id: format_version
@@ -85,7 +84,7 @@ jobs:
         run: |
           mvn versions:set-property \
             -Dproperty=revision \
-            -DnewVersion=${{ needs.build.outputs.version }} \
+            -DnewVersion=${{ needs.release.outputs.version }} \
             -DgenerateBackupPoms=false
 
       - name: Commit version update
@@ -95,7 +94,7 @@ jobs:
           git checkout master
           git pull origin master
           git add pom.xml
-          git commit -m "chore: bump version to ${{ needs.build.outputs.version }}"
+          git commit -m "chore: bump version to ${{ needs.release.outputs.version }}"
           git push origin master
 
       - name: Publish
