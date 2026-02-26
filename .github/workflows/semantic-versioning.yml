@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.format_version.outputs.version }}
-      preview_version: ${{ steps.format_version.outputs.preview_version }}
       version_tag: ${{ steps.version.outputs.version_tag }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,33 +32,22 @@ jobs:
           minor_pattern: "^feat"
           version_format: "${major}.${minor}.${patch}"
 
-      - name: Format Versions
+      - name: Format version
         id: format_version
-        env:
-          BASE_VERSION: ${{ steps.version.outputs.version }}
-          INCREMENT: ${{ steps.version.outputs.increment }}
-          MAJOR: ${{ steps.version.outputs.major }}
-          MINOR: ${{ steps.version.outputs.minor }}
-          PATCH: ${{ steps.version.outputs.patch }}
-        run: |          
-          # Package versions
-          echo "version=$BASE_VERSION" >> $GITHUB_OUTPUT
-          
-          # Preview version includes the increment as a preview suffix
-          PREVIEW_VERSION="${BASE_VERSION}-preview$(printf '%02d' $INCREMENT)"
-          echo "preview_version=$PREVIEW_VERSION" >> $GITHUB_OUTPUT
-          
-          echo "Release version: $BASE_VERSION"
-          echo "Preview version: $PREVIEW_VERSION"
+        run: |
+          echo "version=${{ steps.version.outputs.version }}" >> $GITHUB_OUTPUT
+          echo "Release version: ${{ steps.version.outputs.version }}"
 
-  bump_version:
+  bump_and_tag:
     if: github.actor != 'github-actions[bot]'
-    name: Bump version
+    name: Bump + Tag
     runs-on: ubuntu-latest
     needs: versioning
+    outputs:
+      version_tag: ${{ needs.versioning.outputs.version_tag }}
 
     steps:
-      - name: Checkout
+      - name: Checkout master
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -71,54 +60,35 @@ jobs:
           server-id: github
           settings-path: ${{ github.workspace }}
 
-      - name: Set version
+      - name: Set version in pom
         run: |
           mvn versions:set-property \
             -Dproperty=revision \
             -DnewVersion=${{ needs.versioning.outputs.version }} \
             -DgenerateBackupPoms=false
 
-      - name: Commit version update
+      - name: Commit + Tag
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+
           git add pom.xml
+
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
             git commit -m "chore: bump version to ${{ needs.versioning.outputs.version }}"
-            git push origin master
           fi
-
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    needs: [versioning, bump_version]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Create tag
-        run: |
           git tag ${{ needs.versioning.outputs.version_tag }}
-          git push origin ${{ needs.versioning.outputs.version_tag }}
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ needs.versioning.outputs.version_tag }}
-          generate_release_notes: true
+          git push origin master --tags
 
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: [versioning, bump_version, release]
+    needs: [versioning, bump_and_tag]
 
     steps:
-      - name: Checkout
+      - name: Checkout tag
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.versioning.outputs.version_tag }}
@@ -136,3 +106,15 @@ jobs:
         run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+  release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.versioning.outputs.version_tag }}
+          generate_release_notes: true
