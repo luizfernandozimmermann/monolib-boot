@@ -1,9 +1,12 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to release (ex: master or hotfix/1.4.x)"
+        required: true
+        default: "master"
 
 permissions:
   contents: write
@@ -11,20 +14,20 @@ permissions:
 
 jobs:
   versioning:
-    name: Versioning
+    name: Calculate Version
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.format_version.outputs.version }}
-      version_tag: ${{ steps.version.outputs.version_tag }}
+      version: ${{ steps.semver.outputs.version }}
+      version_tag: v${{ steps.semver.outputs.version }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
 
       - name: Calculate semantic version
-        id: version
+        id: semver
         uses: PaulHatch/semantic-version@v6.0.1
         with:
           tag_prefix: "v"
@@ -32,42 +35,37 @@ jobs:
           minor_pattern: "^feat"
           version_format: "${major}.${minor}.${patch}"
 
-      - name: Format version
-        id: format_version
+      - name: Ensure tag does not exist
         run: |
-          echo "version=${{ steps.version.outputs.version }}" >> $GITHUB_OUTPUT
-          echo "Release version: ${{ steps.version.outputs.version }}"
+          if git rev-parse "${{ needs.versioning.outputs.version_tag }}" >/dev/null 2>&1; then
+            echo "❌ Tag already exists"
+            exit 1
+          fi
 
-  bump_and_tag:
-    if: github.actor != 'github-actions[bot]'
-    name: Bump + Tag
+  bump_version:
+    name: Bump Version
     runs-on: ubuntu-latest
     needs: versioning
-    outputs:
-      version_tag: ${{ needs.versioning.outputs.version_tag }}
 
     steps:
-      - name: Checkout master
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
 
-      - name: Set up JDK 25
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '25'
           distribution: 'temurin'
-          server-id: github
-          settings-path: ${{ github.workspace }}
 
-      - name: Set version in pom
+      - name: Update revision property
         run: |
           mvn versions:set-property \
             -Dproperty=revision \
             -DnewVersion=${{ needs.versioning.outputs.version }} \
             -DgenerateBackupPoms=false
 
-      - name: Commit + Tag
+      - name: Commit bump
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
@@ -75,52 +73,58 @@ jobs:
           git add pom.xml
 
           if git diff --cached --quiet; then
-            echo "No changes to commit"
+            echo "No changes detected"
           else
             git commit -m "chore: bump version to ${{ needs.versioning.outputs.version }}"
+            git push origin ${{ github.event.inputs.branch }}
           fi
-          git tag ${{ needs.versioning.outputs.version_tag }}
-          git push origin master --tags
 
-  deploy:
-    name: Deploy
+  tag:
+    name: Create Tag
     runs-on: ubuntu-latest
-    needs: [versioning, bump_and_tag]
+    needs: [versioning, bump_version]
 
     steps:
-      - name: Checkout tag
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+
+      - name: Create and push tag
+        run: |
+          git tag ${{ needs.versioning.outputs.version_tag }}
+          git push origin ${{ needs.versioning.outputs.version_tag }}
+
+  deploy:
+    name: Deploy from Tag
+    runs-on: ubuntu-latest
+    needs: [versioning, tag]
+
+    steps:
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.versioning.outputs.version_tag }}
           fetch-depth: 0
 
-      - name: Set up JDK 25
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '25'
           distribution: 'temurin'
           server-id: github
           settings-path: ${{ github.workspace }}
 
-      - name: Publish
+      - name: Deploy
         run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
   release:
-    name: GitHub Release
+    name: Create GitHub Release
     runs-on: ubuntu-latest
     needs: [versioning, deploy]
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.versioning.outputs.version_tag }}
-          fetch-depth: 0
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.versioning.outputs.version_tag }}
           generate_release_notes: true
