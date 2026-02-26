@@ -2,11 +2,6 @@ name: Release
 
 on:
   workflow_dispatch:
-    inputs:
-      branch:
-        description: "Branch to release (ex: master or hotfix/1.4.x)"
-        required: true
-        default: "master"
 
 permissions:
   contents: write
@@ -14,6 +9,7 @@ permissions:
 
 jobs:
   versioning:
+    if: github.ref_name == 'master' || startsWith(github.ref_name, 'hotfix/')
     name: Calculate Version
     runs-on: ubuntu-latest
     outputs:
@@ -23,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Calculate semantic version
@@ -50,7 +46,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - uses: actions/setup-java@v4
@@ -76,7 +72,7 @@ jobs:
             echo "No changes detected"
           else
             git commit -m "chore: bump version to ${{ needs.versioning.outputs.version }}"
-            git push origin ${{ github.event.inputs.branch }}
+            git push origin ${{ github.ref_name }}
           fi
 
   tag:
@@ -87,7 +83,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Create and push tag
