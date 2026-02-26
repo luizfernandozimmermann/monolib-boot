@@ -29,6 +29,7 @@ jobs:
           tag_prefix: "v"
           major_pattern: "BREAKING CHANGE|!:"
           minor_pattern: "^feat"
+          patch_pattern: "^(fix|perf)"
           version_format: "${major}.${minor}.${patch}"
 
       - name: Ensure tag does not exist
