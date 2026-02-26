@@ -13,7 +13,6 @@ jobs:
   deploy:
     name: Deploy from Tag
     runs-on: ubuntu-latest
-    needs: [versioning, tag]
 
     steps:
       - uses: actions/checkout@v4
@@ -36,7 +35,7 @@ jobs:
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: [versioning, deploy]
+    needs: [deploy]
 
     steps:
       - uses: softprops/action-gh-release@v2
