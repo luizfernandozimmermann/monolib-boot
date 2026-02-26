@@ -29,7 +29,7 @@ jobs:
           tag_prefix: "v"
           major_pattern: "BREAKING CHANGE|!:"
           minor_pattern: "^feat"
-          ignore_commits_pattern: "^(chore|ci|docs)"
+          ignore_commits_pattern: "^(chore|ci|docs|Merge|revert)"
           version_format: "${major}.${minor}.${patch}"
 
       - name: Ensure tag does not exist
