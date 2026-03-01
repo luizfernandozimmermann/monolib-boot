@@ -64,14 +64,8 @@ jobs:
           git tag ${{ steps.semver.outputs.version_tag }}
           git push origin ${{ steps.semver.outputs.version_tag }}
 
-      - name: Checkout tag
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.semver.outputs.version_tag }}
-          fetch-depth: 0
-
       - name: Deploy
-        run: mvn clean deploy -Drevision=${{ steps.semver.outputs.version }}
+        run: mvn clean deploy -Drevision=${{ steps.semver.outputs.version }} -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
