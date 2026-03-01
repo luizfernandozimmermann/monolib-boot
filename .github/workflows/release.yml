@@ -71,7 +71,7 @@ jobs:
           fetch-depth: 0
 
       - name: Deploy
-        run: mvn clean deploy -Drevision=${{ steps.semver.outputs.version }} -s $GITHUB_WORKSPACE/settings.xml
+        run: mvn clean deploy -Drevision=${{ steps.semver.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
