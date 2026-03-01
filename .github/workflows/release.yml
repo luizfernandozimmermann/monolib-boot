@@ -68,7 +68,7 @@ jobs:
           fetch-depth: 0
 
       - name: Deploy
-        run: mvn -B clean deploy -s $GITHUB_WORKSPACE/settings.xml
+        run: mvn -B clean deploy
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
