@@ -16,17 +16,8 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '25'
-          distribution: 'temurin'
-          server-id: github
-          settings-path: ${{ github.workspace }}
-          server-username: GITHUB_ACTOR
-          server-password: GITHUB_TOKEN
 
       - name: Calculate semantic version
         id: semver
@@ -36,6 +27,14 @@ jobs:
           major_pattern: "BREAKING CHANGE|!:"
           minor_pattern: "^feat"
           version_format: "${major}.${minor}.${patch}"
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          server-id: github
+          settings-path: ${{ github.workspace }}
 
       - name: Update revision property
         run: |
@@ -52,7 +51,7 @@ jobs:
 
           if git diff --cached --quiet; then
             echo "No changes detected"
-            exit 0;
+            exit 1;
           else
             git add .
             git commit -m "chore: bump version to ${{ steps.semver.outputs.version }}"
@@ -61,22 +60,22 @@ jobs:
 
       - name: Create and push tag
         run: |
-          git tag v${{ steps.semver.outputs.version }}
-          git push origin v${{ steps.semver.outputs.version }}
+          git tag ${{ steps.semver.outputs.version_tag }}
+          git push origin ${{ steps.semver.outputs.version_tag }}
 
       - name: Checkout tag
         uses: actions/checkout@v4
         with:
-          ref: v${{ steps.semver.outputs.version }}
+          ref: ${{ steps.semver.outputs.version_tag }}
           fetch-depth: 0
 
       - name: Deploy
-        run: mvn -B clean deploy
+        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.semver.outputs.version }}
+          tag_name: ${{ steps.semver.outputs.version_tag }}
           generate_release_notes: true
