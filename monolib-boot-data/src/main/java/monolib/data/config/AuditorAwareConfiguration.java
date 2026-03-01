@@ -1,5 +1,6 @@
 package monolib.data.config;
 
+import monolib.core.context.Context;
 import monolib.core.context.ContextHolder;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.data.domain.AuditorAware;
@@ -13,7 +14,7 @@ public class AuditorAwareConfiguration implements AuditorAware<String> {
     @Override
     @NullMarked
     public Optional<String> getCurrentAuditor() {
-        return Optional.ofNullable(ContextHolder.get().getEmail());
+        return Optional.ofNullable(ContextHolder.get()).map(Context::getEmail);
     }
 
 }
