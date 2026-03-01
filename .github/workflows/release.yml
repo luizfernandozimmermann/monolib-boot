@@ -58,6 +58,7 @@ jobs:
         run: |
           mvn versions:set-property \
             -Dproperty=revision \
+            -Drevision=${{ needs.versioning.outputs.version }}
             -DnewVersion=${{ needs.versioning.outputs.version }} \
             -DgenerateBackupPoms=false
 
