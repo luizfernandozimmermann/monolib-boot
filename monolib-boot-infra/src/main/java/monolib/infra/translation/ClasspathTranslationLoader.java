@@ -3,13 +3,12 @@ package monolib.infra.translation;
 import monolib.core.exception.BusinessException;
 import monolib.core.exception.ErrorCode;
 import monolib.core.translation.TranslationLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Objects;
@@ -23,12 +22,7 @@ public class ClasspathTranslationLoader implements TranslationLoader {
         var locales = new HashSet<Locale>();
 
         try {
-            var resources = Thread.currentThread().getContextClassLoader().getResources("translations");
-
-            while (resources.hasMoreElements()) {
-                loadTranslationFiles(resources, locales);
-            }
-
+            loadTranslationFiles(locales);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.UNKNOWN, e);
         }
@@ -36,9 +30,14 @@ public class ClasspathTranslationLoader implements TranslationLoader {
         return locales;
     }
 
-    private void loadTranslationFiles(Enumeration<URL> resources, Set<Locale> locales) throws URISyntaxException {
-        Arrays.stream(Objects.requireNonNull(new File(resources.nextElement().toURI()).listFiles()))
-                .map(File::getName)
+    private void loadTranslationFiles(Set<Locale> locales) throws IOException {
+
+        var resolver = new PathMatchingResourcePatternResolver();
+        var resources = resolver.getResources("classpath*:/translations/*.properties");
+
+        Arrays.stream(resources)
+                .map(Resource::getFilename)
+                .filter(Objects::nonNull)
                 .filter(ClasspathTranslationLoader::isPropertiesFile)
                 .map(ClasspathTranslationLoader::splitFileName)
                 .filter(ClasspathTranslationLoader::hasTwoParts)

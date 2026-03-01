@@ -37,10 +37,10 @@ public class TranslationConfig {
         var resources = resolver.getResources("classpath*:/translations/*_messages*.properties");
 
         for (var resource : resources) {
-            var uri = resource.getURI().toString();
-            var base = uri
-                    .substring(uri.indexOf("/translations/"), uri.indexOf("_messages") + 9);
-            basenames.add("classpath:" + base);
+            var filename = resource.getFilename();
+            if (filename == null) continue;
+            var baseName = filename.substring(0, filename.indexOf("_messages") + 9);
+            basenames.add("classpath:/translations/" + baseName);
         }
         return basenames;
     }
