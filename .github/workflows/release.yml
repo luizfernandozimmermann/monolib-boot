@@ -25,6 +25,8 @@ jobs:
           distribution: 'temurin'
           server-id: github
           settings-path: ${{ github.workspace }}
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
 
       - name: Calculate semantic version
         id: semver
@@ -39,6 +41,7 @@ jobs:
         run: |
           mvn -B versions:set-property \
             -Dproperty=revision \
+            -Drevision=${{ steps.semver.outputs.version }} \
             -DnewVersion=${{ steps.semver.outputs.version }} \
             -DgenerateBackupPoms=false
 
