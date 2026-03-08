@@ -50,4 +50,10 @@ public class RoleCoreServiceImpl implements RoleCoreService {
     public void grantPermissionsForAdmin(List<Permission> permissions) {
         rolePermissionService.grantPermissionsForAdmin(permissionConverter.convert(permissions));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Role getAdminRole() {
+        return crudService.findByAdminTrue().map(RoleConverter::convert).orElseThrow();
+    }
 }

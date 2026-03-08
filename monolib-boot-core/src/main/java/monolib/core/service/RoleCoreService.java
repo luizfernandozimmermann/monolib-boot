@@ -11,4 +11,5 @@ public interface RoleCoreService {
 
     void create(Role role);
     void grantPermissionsForAdmin(List<Permission> permissions);
+    Role getAdminRole();
 }

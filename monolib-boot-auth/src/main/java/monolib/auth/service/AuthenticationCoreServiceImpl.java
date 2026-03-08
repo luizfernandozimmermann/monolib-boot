@@ -7,7 +7,6 @@ import monolib.auth.credential.service.CredentialService;
 import monolib.auth.session.service.SessionService;
 import monolib.auth.user.service.UserService;
 import monolib.auth.validator.AuthenticationValidator;
-import monolib.core.model.Role;
 import monolib.core.model.Session;
 import monolib.core.model.User;
 import monolib.core.service.AuthenticationCoreService;
@@ -20,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor(onConstructor_ = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationCoreServiceImpl implements AuthenticationCoreService {
-
-    private static final Role ROLE_ADMIN = Role.of("ADMIN");
 
     SessionService sessionService;
 
@@ -63,7 +60,7 @@ public class AuthenticationCoreServiceImpl implements AuthenticationCoreService 
         validator.validateCreateFirstUser();
         var user = userService.createFirstUser(email, username);
         credentialService.createCredential(user, password);
-        roleService.grantRole(user, ROLE_ADMIN);
+        roleService.grantRole(user, roleService.getAdminRole());
         return sessionService.createSession(user);
     }
 
