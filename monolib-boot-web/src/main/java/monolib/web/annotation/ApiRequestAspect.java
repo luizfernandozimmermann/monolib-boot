@@ -34,13 +34,16 @@ public class ApiRequestAspect {
 
     CookieService cookieService;
 
-    @Around("@within(Handler) || within(EntityHandler)")
+    @Around("bean(*Handler)")
     public Object serviceRequest(ProceedingJoinPoint joinPoint) throws Throwable {
         var method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         var apiRequest = getAnnotation(method, ApiRequest.class);
-        var handlerRequest = getAnnotation(method, Handler.class);
 
-        if (apiRequest != null && handlerRequest != null) {
+        if (apiRequest != null) {
+            var handlerRequest = getAnnotation(method, Handler.class);
+            if (handlerRequest == null) {
+                return joinPoint.proceed();
+            }
             var session = ContextHolder.get().getSession();
             validateAuthentication(apiRequest, session);
             validateFirstSession(apiRequest, session);
