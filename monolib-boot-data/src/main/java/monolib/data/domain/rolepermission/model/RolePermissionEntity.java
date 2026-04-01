@@ -8,8 +8,9 @@ import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import monolib.data.annotation.Field;
-import monolib.data.base.model.EntityBase;
+import monolib.annotations.GenerateRepository;
+import monolib.data.api.annotation.Field;
+import monolib.data.api.model.EntityBase;
 import monolib.data.domain.permission.model.PermissionEntity;
 import monolib.data.domain.role.model.RoleEntity;
 
@@ -18,6 +19,7 @@ import monolib.data.domain.role.model.RoleEntity;
 @Entity
 @Table(name = "role_permission")
 @EqualsAndHashCode(callSuper = true)
+@GenerateRepository
 public class RolePermissionEntity extends EntityBase {
 
     @Field(updatable = false)

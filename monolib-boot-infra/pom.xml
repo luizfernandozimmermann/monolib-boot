@@ -15,7 +15,6 @@
         <dependency>
             <groupId>dev.zimmermann.monolib</groupId>
             <artifactId>monolib-boot-core</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

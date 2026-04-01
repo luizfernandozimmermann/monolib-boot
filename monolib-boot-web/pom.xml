@@ -21,7 +21,6 @@
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
@@ -29,7 +28,6 @@
         <dependency>
             <groupId>dev.zimmermann.monolib</groupId>
             <artifactId>monolib-boot-data</artifactId>
-            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.annotation</groupId>
@@ -46,6 +44,11 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.zimmermann.monolib</groupId>
+            <artifactId>monolib-boot-web-api</artifactId>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

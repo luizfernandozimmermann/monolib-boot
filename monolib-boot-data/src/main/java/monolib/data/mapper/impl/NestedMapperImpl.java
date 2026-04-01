@@ -2,7 +2,7 @@ package monolib.data.mapper.impl;
 
 import monolib.data.mapper.NestedMapper;
 import monolib.data.mapper.dto.MappingConfig;
-import monolib.data.base.model.EntityBase;
+import monolib.data.api.model.EntityBase;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;

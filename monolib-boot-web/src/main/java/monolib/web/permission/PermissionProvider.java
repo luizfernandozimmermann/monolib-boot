@@ -1,8 +1,8 @@
 package monolib.web.permission;
 
 import lombok.experimental.UtilityClass;
-import monolib.web.annotation.ApiRequest;
-import monolib.web.annotation.Handler;
+import monolib.web.api.ApiRequest;
+import monolib.web.api.Handler;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.HashSet;

@@ -3,8 +3,8 @@ package monolib.data.domain.userrole.factory.impl;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import monolib.data.domain.role.service.RoleCRUDService;
-import monolib.data.domain.user.service.UserCRUDService;
+import monolib.data.domain.role.repository.RoleRepository;
+import monolib.data.domain.user.repository.UserRepository;
 import monolib.data.domain.userrole.factory.UserRoleFactory;
 import monolib.data.domain.userrole.model.UserRoleEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +18,16 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserRoleFactoryImpl implements UserRoleFactory {
 
-    UserCRUDService userService;
+    UserRepository userRepository;
 
-    RoleCRUDService roleService;
+    RoleRepository roleRepository;
 
     @Override
     @Transactional(readOnly = true)
     public UserRoleEntity create(UUID userId, UUID roleId) {
         var userRole = new UserRoleEntity();
-        userService.findById(userId).ifPresent(userRole::setUser);
-        roleService.findById(roleId).ifPresent(userRole::setRole);
+        userRepository.findById(userId).ifPresent(userRole::setUser);
+        roleRepository.findById(roleId).ifPresent(userRole::setRole);
         return userRole;
     }
 

@@ -8,8 +8,9 @@ import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import monolib.data.annotation.Field;
-import monolib.data.base.model.EntityBase;
+import monolib.annotations.GenerateCRUDService;
+import monolib.data.api.annotation.Field;
+import monolib.data.api.model.EntityBase;
 import monolib.data.domain.rolepermission.model.RolePermissionEntity;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.List;
 @Entity
 @Table(name = "roles")
 @EqualsAndHashCode(callSuper = true)
+@GenerateCRUDService
 public class RoleEntity extends EntityBase {
 
     @Column(name = "name")

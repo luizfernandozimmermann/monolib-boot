@@ -4,11 +4,11 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import monolib.core.model.Session;
-import monolib.core.repository.SessionCoreRepository;
 import monolib.core.model.User;
+import monolib.core.repository.SessionCoreRepository;
 import monolib.data.domain.usersession.converter.UserSessionConverter;
 import monolib.data.domain.usersession.model.UserSessionEntity;
-import monolib.data.domain.usersession.service.UserSessionCRUDService;
+import monolib.data.domain.usersession.repository.UserSessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -20,40 +20,40 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SessionCoreRepositoryImpl implements SessionCoreRepository {
 
-    UserSessionCRUDService userSessionCRUDService;
+    UserSessionRepository userSessionRepository;
 
     UserSessionConverter converter;
 
     @Override
     public Optional<Session> findByAccessTokenAndNotRevoked(String accessToken) {
-        return userSessionCRUDService.findByAccessTokenHashAndRevokedAtNull(accessToken).map(converter::convert);
+        return userSessionRepository.findByAccessTokenHashAndRevokedAtNull(accessToken).map(converter::convert);
     }
 
     @Override
     public Optional<Session> findByRefreshToken(String refreshToken) {
-        return userSessionCRUDService.findByRefreshTokenHash(refreshToken).map(converter::convert);
+        return userSessionRepository.findByRefreshTokenHash(refreshToken).map(converter::convert);
     }
 
     @Override
     public void revokeSession(Session session, LocalDateTime revokedAt) {
-        userSessionCRUDService.revokeSession(session.getId(), revokedAt);
+        userSessionRepository.revokeSession(session.getId(), revokedAt);
     }
 
     @Override
     public void revokeAllSessionsByUser(User user) {
-        userSessionCRUDService.revokeAllSessionsByUser(user.getId());
+        userSessionRepository.revokeAllSessionsByUser(user.getId());
     }
 
     @Override
     public Session save(Session session) {
         var entity = Optional.ofNullable(session.getId())
-                .flatMap(userSessionCRUDService::findById)
+                .flatMap(userSessionRepository::findById)
                 .orElseGet(UserSessionEntity::new);
-        return converter.convert(userSessionCRUDService.save(converter.convert(entity, session)));
+        return converter.convert(userSessionRepository.save(converter.convert(entity, session)));
     }
 
     @Override
     public Optional<Session> findLastSessionOfUser(User user) {
-        return userSessionCRUDService.findFirstByUserIdOrderByCreatedAtDesc(user.getId()).map(converter::convert);
+        return userSessionRepository.findFirstByUserIdOrderByCreatedAtDesc(user.getId()).map(converter::convert);
     }
 }

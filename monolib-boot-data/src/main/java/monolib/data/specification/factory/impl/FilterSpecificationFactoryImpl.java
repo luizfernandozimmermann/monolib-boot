@@ -3,12 +3,13 @@ package monolib.data.specification.factory.impl;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import monolib.data.api.filter.FilterSpecificationFactory;
 import monolib.data.filter.parser.FilterParser;
 import monolib.data.node.QueryNode;
 import monolib.data.order.parser.OrderParser;
 import monolib.data.specification.FilterSpecification;
-import monolib.data.specification.factory.FilterSpecificationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,7 +22,7 @@ public class FilterSpecificationFactoryImpl implements FilterSpecificationFactor
     OrderParser orderParser;
 
     @Override
-    public <T> FilterSpecification<T> create(String filter, String orderBy) {
+    public <T> Specification<T> create(String filter, String orderBy) {
         var queryNode = QueryNode.of(filterParser.parse(filter), orderParser.parse(orderBy));
         return FilterSpecification.<T>of(queryNode);
     }

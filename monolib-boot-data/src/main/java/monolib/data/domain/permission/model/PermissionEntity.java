@@ -9,14 +9,16 @@ import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import monolib.data.annotation.Field;
-import monolib.data.base.model.EntityBase;
+import monolib.annotations.GenerateCRUDService;
+import monolib.data.api.annotation.Field;
+import monolib.data.api.model.EntityBase;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "permission")
 @EqualsAndHashCode(callSuper = true)
+@GenerateCRUDService
 public class PermissionEntity extends EntityBase {
 
     @Field(updatable = false)

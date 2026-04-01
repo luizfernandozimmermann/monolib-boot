@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import monolib.data.domain.permission.model.PermissionEntity;
 import monolib.data.domain.role.model.RoleEntity;
-import monolib.data.domain.role.service.RoleCRUDService;
+import monolib.data.domain.role.repository.RoleRepository;
 import monolib.data.domain.rolepermission.factory.RolePermissionFactory;
 import monolib.data.domain.rolepermission.repository.RolePermissionRepository;
 import monolib.data.domain.rolepermission.service.RolePermissionService;
@@ -20,7 +20,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RolePermissionServiceImpl implements RolePermissionService {
 
-    RoleCRUDService roleService;
+    RoleRepository roleRepository;
 
     RolePermissionRepository repository;
 
@@ -29,7 +29,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     @Override
     @Transactional
     public void grantPermissionsForAdmin(List<PermissionEntity> permissions) {
-        roleService.findByAdminTrue().ifPresent(adminRole ->
+        roleRepository.findByAdminTrue().ifPresent(adminRole ->
                 permissions.stream()
                         .filter(permission -> !repository.existsByRoleAndPermission(adminRole, permission))
                         .forEach(permission -> grantPermission(adminRole, permission))

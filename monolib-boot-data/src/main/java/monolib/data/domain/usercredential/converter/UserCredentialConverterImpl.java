@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import monolib.core.model.Credential;
 import monolib.data.domain.user.converter.UserConverter;
-import monolib.data.domain.user.service.UserCRUDService;
+import monolib.data.domain.user.repository.UserRepository;
 import monolib.data.domain.usercredential.model.UserCredentialEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserCredentialConverterImpl implements UserCredentialConverter {
 
-    UserCRUDService userCRUDService;
+    UserRepository userRepository;
 
     @Override
     public Credential convert(UserCredentialEntity entity) {
@@ -32,7 +32,7 @@ public class UserCredentialConverterImpl implements UserCredentialConverter {
     public UserCredentialEntity convert(UserCredentialEntity entity, Credential credential) {
         entity.setId(credential.getId());
         entity.setPasswordHash(credential.getPassword());
-        userCRUDService.findById(credential.getUser().getId()).ifPresent(entity::setUser);
+        userRepository.findById(credential.getUser().getId()).ifPresent(entity::setUser);
         return entity;
     }
 

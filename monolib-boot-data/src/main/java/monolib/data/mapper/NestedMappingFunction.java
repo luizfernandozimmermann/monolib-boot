@@ -1,6 +1,6 @@
 package monolib.data.mapper;
 
-import monolib.data.base.model.EntityBase;
+import monolib.data.api.model.EntityBase;
 
 import java.util.Collection;
 import java.util.Map;

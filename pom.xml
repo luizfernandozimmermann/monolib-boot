@@ -10,12 +10,18 @@
     <packaging>pom</packaging>
     <modules>
         <module>monolib-boot-core</module>
+        <module>monolib-boot-annotations</module>
+        <module>monolib-boot-data-api</module>
+        <module>monolib-boot-web-api</module>
+        <module>monolib-boot-generator</module>
+        <module>monolib-boot-processor</module>
         <module>monolib-boot-data</module>
         <module>monolib-boot-web</module>
         <module>monolib-boot-auth</module>
         <module>monolib-boot-infra</module>
         <module>monolib-boot-starter</module>
         <module>monolib-boot-web-ready</module>
+        <module>monolib-boot-starter-parent</module>
     </modules>
 
     <properties>
@@ -32,6 +38,9 @@
         <querydsl.version>5.1.0</querydsl.version>
         <lombok.version>1.18.42</lombok.version>
         <srpring.version>4.0.2</srpring.version>
+        <apache-commons.version>1.10.0</apache-commons.version>
+        <javapoet.version>1.13.0</javapoet.version>
+        <google-auto-service.version>1.1.1</google-auto-service.version>
     </properties>
 
     <dependencies>
@@ -50,6 +59,143 @@
                 <version>4.0.2</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${apache-commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-annotations</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-data-api</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-web-api</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-generator</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-generator-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-generator-data</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-generator-web</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-processor</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-data</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-web</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-auth</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-infra</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.zimmermann.monolib</groupId>
+                <artifactId>monolib-boot-web-ready</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-jpa</artifactId>
+                <version>${querydsl.version}</version>
+                <classifier>jakarta</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-core</artifactId>
+                <version>${querydsl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-apt</artifactId>
+                <version>${querydsl.version}</version>
+                <classifier>jakarta</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup</groupId>
+                <artifactId>javapoet</artifactId>
+                <version>${javapoet.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service-annotations</artifactId>
+                <version>${google-auto-service.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service</artifactId>
+                <version>${google-auto-service.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${jakarta-persistence.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jsonwebtoken.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jsonwebtoken.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jsonwebtoken.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.mkammerer</groupId>
+                <artifactId>argon2-jvm</artifactId>
+                <version>${argon2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

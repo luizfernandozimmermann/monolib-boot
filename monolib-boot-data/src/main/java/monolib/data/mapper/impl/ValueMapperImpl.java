@@ -4,7 +4,7 @@ import monolib.data.mapper.CollectionMapper;
 import monolib.data.mapper.NestedMapper;
 import monolib.data.mapper.ValueMapper;
 import monolib.data.mapper.dto.MappingConfig;
-import monolib.data.base.model.EntityBase;
+import monolib.data.api.model.EntityBase;
 import monolib.data.utils.TypeUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

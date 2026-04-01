@@ -8,8 +8,9 @@ import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import monolib.data.annotation.Field;
-import monolib.data.base.model.EntityBase;
+import monolib.annotations.GenerateCRUDService;
+import monolib.data.api.annotation.Field;
+import monolib.data.api.model.EntityBase;
 import monolib.data.domain.role.model.RoleEntity;
 import monolib.data.domain.user.model.UserEntity;
 
@@ -18,6 +19,7 @@ import monolib.data.domain.user.model.UserEntity;
 @Entity
 @Table(name = "user_role")
 @EqualsAndHashCode(callSuper = true)
+@GenerateCRUDService
 public class UserRoleEntity extends EntityBase {
 
     @Field(updatable = false)

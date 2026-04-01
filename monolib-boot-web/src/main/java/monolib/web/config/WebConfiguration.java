@@ -1,10 +1,13 @@
 package monolib.web.config;
 
+import monolib.web.aspect.ApiRequestAspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverters;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
@@ -14,6 +17,9 @@ import java.util.List;
 public class WebConfiguration implements WebMvcConfigurer {
 
     private final List<HttpMessageConverter<?>> messageConverters;
+
+    @Autowired
+    private ApiRequestAspect apiRequestAspect;
 
     public WebConfiguration() {
         this.messageConverters = new ArrayList<>();
@@ -35,4 +41,8 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .allowCredentials(true);
     }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(apiRequestAspect);
+    }
 }

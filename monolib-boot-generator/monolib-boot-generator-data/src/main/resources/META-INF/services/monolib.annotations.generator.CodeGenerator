@@ -1,0 +1,4 @@
+monolib.generator.data.dto.DtoCodeGenerator
+monolib.generator.data.service.CRUDServiceCodeGenerator
+monolib.generator.data.repository.RepositoryCodeGenerator
+monolib.generator.data.controller.ControllerCodeGenerator

@@ -1,7 +1,7 @@
 package monolib.data.mapper.dto;
 
 import monolib.data.mapper.NestedMappingFunction;
-import monolib.data.base.model.EntityBase;
+import monolib.data.api.model.EntityBase;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

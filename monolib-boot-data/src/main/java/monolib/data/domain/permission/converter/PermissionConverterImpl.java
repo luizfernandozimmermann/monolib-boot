@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import monolib.core.model.Permission;
 import monolib.data.domain.permission.model.PermissionEntity;
-import monolib.data.domain.permission.service.PermissionCRUDService;
+import monolib.data.domain.permission.repository.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PermissionConverterImpl implements PermissionConverter {
 
-    PermissionCRUDService crudService;
+    PermissionRepository permissionRepository;
 
     @Override
     public List<PermissionEntity> convert(List<Permission> permissions) {
@@ -31,7 +31,7 @@ public class PermissionConverterImpl implements PermissionConverter {
         entity.setDescription(permission.getDescription());
         Optional.ofNullable(permission.getParent())
                 .map(Permission::getId)
-                .flatMap(crudService::findById)
+                .flatMap(permissionRepository::findById)
                 .ifPresent(entity::setParentPermission);
         return entity;
     }

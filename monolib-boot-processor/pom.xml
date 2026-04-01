@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>dev.zimmermann.monolib</groupId>
+        <artifactId>monolib-boot</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>monolib-boot-processor</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>dev.zimmermann.monolib</groupId>
+            <artifactId>monolib-boot-annotations</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service-annotations</artifactId>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+</project>

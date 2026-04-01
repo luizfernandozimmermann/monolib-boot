@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>dev.zimmermann.monolib</groupId>
+        <artifactId>monolib-boot</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>monolib-boot-starter-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <release>${maven.compiler.release}</release>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </path>
+                            <path>
+                                <groupId>com.querydsl</groupId>
+                                <artifactId>querydsl-apt</artifactId>
+                                <classifier>jakarta</classifier>
+                            </path>
+                            <path>
+                                <groupId>jakarta.persistence</groupId>
+                                <artifactId>jakarta.persistence-api</artifactId>
+                            </path>
+                            <path>
+                                <groupId>dev.zimmermann.monolib</groupId>
+                                <artifactId>monolib-boot-processor</artifactId>
+                            </path>
+                            <path>
+                                <groupId>dev.zimmermann.monolib</groupId>
+                                <artifactId>monolib-boot-generator-data</artifactId>
+                            </path>
+                            <path>
+                                <groupId>dev.zimmermann.monolib</groupId>
+                                <artifactId>monolib-boot-generator-web</artifactId>
+                            </path>
+                        </annotationProcessorPaths>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <generatedSourcesDirectory>${project.build.directory}/generated-sources/annotations</generatedSourcesDirectory>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

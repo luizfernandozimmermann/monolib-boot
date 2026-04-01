@@ -9,8 +9,9 @@ import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import monolib.data.annotation.Field;
-import monolib.data.base.model.EntityBase;
+import monolib.annotations.GenerateRepository;
+import monolib.data.api.annotation.Field;
+import monolib.data.api.model.EntityBase;
 import monolib.data.domain.user.model.UserEntity;
 
 @Getter
@@ -18,6 +19,7 @@ import monolib.data.domain.user.model.UserEntity;
 @Entity
 @Table(name = "user_credential")
 @EqualsAndHashCode(callSuper = true)
+@GenerateRepository
 public class UserCredentialEntity extends EntityBase {
 
     @Field(updatable = false, accessible = false)

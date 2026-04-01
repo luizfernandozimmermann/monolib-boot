@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 import monolib.data.mapper.FieldMapper;
 import monolib.data.mapper.ValueMapper;
 import monolib.data.mapper.dto.MappingConfig;
-import monolib.data.mapper.metadata.EntityMetadata;
+import monolib.data.api.mapper.EntityMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

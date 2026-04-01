@@ -1,9 +1,9 @@
 package monolib.data.mapper.impl;
 
-import monolib.data.mapper.AutoMapper;
+import monolib.data.api.mapper.AutoMapper;
 import monolib.data.mapper.MappingExecutor;
-import monolib.data.base.model.EntityBase;
-import monolib.data.base.model.EntityBaseDto;
+import monolib.data.api.model.EntityBase;
+import monolib.data.api.model.EntityDtoBase;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,17 +21,17 @@ public class AutoMapperImpl implements AutoMapper {
     MappingExecutor executor;
 
     @Override
-    public <E extends EntityBase, D extends EntityBaseDto> E dtoToEntity(D dto, Class<E> entityClass) {
+    public <E extends EntityBase, D extends EntityDtoBase> E dtoToEntity(D dto, Class<E> entityClass) {
         return executor.executeDtoToEntity(dto, entityClass);
     }
 
     @Override
-    public <E extends EntityBase, D extends EntityBaseDto> void updateEntity(D dto, E entity) {
+    public <E extends EntityBase, D extends EntityDtoBase> void updateEntity(D dto, E entity) {
         executor.executeUpdate(dto, entity);
     }
 
     @Override
-    public <E extends EntityBase, D extends EntityBaseDto> D entityToDto(E entity, Class<D> dtoClass) {
+    public <E extends EntityBase, D extends EntityDtoBase> D entityToDto(E entity, Class<D> dtoClass) {
         return executor.executeEntityToDto(entity, dtoClass);
     }
 

@@ -1,6 +1,6 @@
 package monolib.web.config;
 
-import monolib.web.annotation.ApiRequest;
+import monolib.web.api.ApiRequest;
 import org.jspecify.annotations.NonNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;

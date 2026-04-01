@@ -9,6 +9,7 @@ import monolib.core.model.User;
 import monolib.core.service.RoleCoreService;
 import monolib.data.domain.permission.converter.PermissionConverter;
 import monolib.data.domain.role.converter.RoleConverter;
+import monolib.data.domain.role.repository.RoleRepository;
 import monolib.data.domain.rolepermission.service.RolePermissionService;
 import monolib.data.domain.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoleCoreServiceImpl implements RoleCoreService {
 
-    RoleCRUDService crudService;
+    RoleRepository roleRepository;
 
     UserRoleService userRoleService;
 
@@ -39,9 +40,9 @@ public class RoleCoreServiceImpl implements RoleCoreService {
     @Override
     @Transactional
     public void create(Role role) {
-        crudService.findByName(role.getName()).orElseGet(() -> {
+        roleRepository.findByName(role.getName()).orElseGet(() -> {
             var entity = RoleConverter.convert(role);
-            return crudService.save(entity);
+            return roleRepository.save(entity);
         });
     }
 
@@ -54,6 +55,6 @@ public class RoleCoreServiceImpl implements RoleCoreService {
     @Override
     @Transactional(readOnly = true)
     public Role getAdminRole() {
-        return crudService.findByAdminTrue().map(RoleConverter::convert).orElseThrow();
+        return roleRepository.findByAdminTrue().map(RoleConverter::convert).orElseThrow();
     }
 }

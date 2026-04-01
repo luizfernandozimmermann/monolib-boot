@@ -29,34 +29,38 @@
         <dependency>
             <groupId>dev.zimmermann.monolib</groupId>
             <artifactId>monolib-boot-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <groupId>dev.zimmermann.monolib</groupId>
+            <artifactId>monolib-boot-data-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.zimmermann.monolib</groupId>
+            <artifactId>monolib-boot-processor</artifactId>
+            <version>${revision}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-jpa</artifactId>
-            <version>${querydsl.version}</version>
             <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-core</artifactId>
-            <version>${querydsl.version}</version>
         </dependency>
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
-            <version>${querydsl.version}</version>
             <classifier>jakarta</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>${apache.commons.version}</version>
         </dependency>
     </dependencies>
 
@@ -75,15 +79,24 @@
                         <path>
                             <groupId>com.querydsl</groupId>
                             <artifactId>querydsl-apt</artifactId>
-                            <version>${querydsl.version}</version>
                             <classifier>jakarta</classifier>
                         </path>
                         <path>
                             <groupId>jakarta.persistence</groupId>
                             <artifactId>jakarta.persistence-api</artifactId>
-                            <version>${jakarta-persistence.version}</version>
+                        </path>
+                        <path>
+                            <groupId>dev.zimmermann.monolib</groupId>
+                            <artifactId>monolib-boot-processor</artifactId>
+                        </path>
+                        <path>
+                            <groupId>dev.zimmermann.monolib</groupId>
+                            <artifactId>monolib-boot-generator-data</artifactId>
                         </path>
                     </annotationProcessorPaths>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <generatedSourcesDirectory>${project.build.directory}/generated-sources/annotations</generatedSourcesDirectory>
                 </configuration>
             </plugin>
         </plugins>
