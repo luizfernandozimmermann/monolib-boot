@@ -5,14 +5,14 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
+import monolib.data.api.mapper.EntityMetadata;
 import monolib.data.mapper.FieldMapper;
 import monolib.data.mapper.ValueMapper;
+import monolib.data.mapper.dto.FieldMappingContext;
 import monolib.data.mapper.dto.MappingConfig;
-import monolib.data.api.mapper.EntityMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
 
 @Component
@@ -26,49 +26,39 @@ public class FieldMapperImpl implements FieldMapper {
     public void mapFields(MappingConfig<?, ?, ?> config) {
         var metadata = EntityMetadata.of(config.getEntityClass());
         ReflectionUtils.getFields(config.getSource().getClass())
-                .forEach(field -> processField(field, config, metadata));
+                .forEach(field -> processField(FieldMappingContext.of(field, config, metadata)));
     }
 
     @SneakyThrows
-    private void processField(Field sourceField, MappingConfig<?, ?, ?> config, EntityMetadata metadata) {
-        var name = sourceField.getName();
-        if (!config.shouldMap(name) || !metadata.isAccessible(name)) {
+    private void processField(FieldMappingContext fieldContext) {
+        if (shouldNotProcess(fieldContext)) {
             return;
         }
-        if (!config.isIncludeNonUpdatable() && !metadata.isUpdatable(name)) {
+        if (fieldContext.isTargetMap()) {
+            mapMapField(fieldContext);
             return;
         }
-        processField(sourceField, config);
+        mapObjectField(fieldContext);
+    }
+
+    private static boolean shouldNotProcess(FieldMappingContext fieldContext) {
+        return !fieldContext.shouldMap() || !fieldContext.isAccessible() ||
+                (!fieldContext.isIncludeNonUpdatable() && !fieldContext.isUpdatable());
     }
 
     @SneakyThrows
-    private void processField(Field sourceField, MappingConfig<?, ?, ?> config) {
-        sourceField.setAccessible(true);
-        var value = sourceField.get(config.getSource());
-        if (Objects.isNull(value)) {
-            return;
-        }
-        if (config.isTargetMap()) {
-            mapMapField(sourceField, value, config);
-            return;
-        }
-        mapObjectField(sourceField, value, config);
-    }
-
-    @SneakyThrows
-    private void mapObjectField(Field sourceField, Object value, MappingConfig<?, ?, ?> config) {
-        var targetField = ReflectionUtils.getFieldOrNull(config.getTarget().getClass(), sourceField.getName());
+    private void mapObjectField(FieldMappingContext fieldContext) {
+        var targetField = fieldContext.getTargetField();
         if (Objects.isNull(targetField)) {
             return;
         }
-        var mapped = valueMapper.map(sourceField, value, config);
-        targetField.setAccessible(true);
-        targetField.set(config.getTarget(), mapped);
+        var mapped = valueMapper.map(fieldContext);
+        fieldContext.setTargetFieldValue(mapped);
     }
 
     @SneakyThrows
-    private void mapMapField(Field sourceField, Object value, MappingConfig<?, ?, ?> config) {
-        config.setMapField(sourceField.getName(), valueMapper.map(sourceField, value, config));
+    private void mapMapField(FieldMappingContext fieldContext) {
+        fieldContext.setMapField(valueMapper.map(fieldContext));
     }
 
 }

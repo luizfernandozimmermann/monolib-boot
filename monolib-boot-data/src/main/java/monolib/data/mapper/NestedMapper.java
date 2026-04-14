@@ -1,9 +1,7 @@
 package monolib.data.mapper;
 
-import monolib.data.mapper.dto.MappingConfig;
-
-import java.lang.reflect.Field;
+import monolib.data.mapper.dto.FieldMappingContext;
 
 public interface NestedMapper {
-    Object mapNested(Field sourceField, Object value, MappingConfig<?, ?, ?> config);
+    Object mapNested(FieldMappingContext fieldContext, Object value);
 }

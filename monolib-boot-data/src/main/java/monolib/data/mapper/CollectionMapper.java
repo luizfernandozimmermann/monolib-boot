@@ -1,12 +1,11 @@
 package monolib.data.mapper;
 
-import monolib.data.mapper.dto.MappingConfig;
+import monolib.data.mapper.dto.FieldMappingContext;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 
 public interface CollectionMapper {
 
-    Collection<?> mapCollection(Field sourceField, Collection<?> values, MappingConfig<?, ?, ?> config);
+    Collection<?> mapCollection(FieldMappingContext fieldContext);
 
 }

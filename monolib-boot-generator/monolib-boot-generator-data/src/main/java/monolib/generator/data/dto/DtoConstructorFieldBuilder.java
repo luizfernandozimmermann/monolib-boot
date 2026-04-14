@@ -7,9 +7,11 @@ import com.squareup.javapoet.TypeName;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import monolib.annotations.GenerateDto;
-import monolib.generator.core.GeneratorNameResolver;
+import monolib.data.api.annotation.Field;
 import monolib.generator.core.AbstractGeneratorContext;
+import monolib.generator.core.AnnotationWrapper;
 import monolib.generator.core.GeneratorContext;
+import monolib.generator.core.GeneratorNameResolver;
 import monolib.generator.data.utils.FieldGeneratorUtils;
 
 import javax.lang.model.element.Modifier;
@@ -45,10 +47,10 @@ public class DtoConstructorFieldBuilder extends AbstractGeneratorContext {
     private void addValidationAnnotations(FieldSpec.Builder fieldBuilder, VariableElement field) {
         for (var mirror : field.getAnnotationMirrors()) {
             var annotationType = mirror.getAnnotationType().toString();
-            if (!annotationType.startsWith("jakarta.validation")) {
+            if (!annotationType.equals(Field.class.getName())) {
                 continue;
             }
-            fieldBuilder.addAnnotation(annotationBuilder.build(mirror));
+            fieldBuilder.addAnnotations(annotationBuilder.build(mirror));
         }
     }
 
@@ -65,7 +67,7 @@ public class DtoConstructorFieldBuilder extends AbstractGeneratorContext {
     private ParameterizedTypeName resolveCollection(VariableElement field) {
         var argClass = getFieldTypeElement(field);
 
-        if (argClass == null || argClass.getAnnotation(GenerateDto.class) == null) {
+        if (argClass == null || !AnnotationWrapper.of(argClass, GenerateDto.class).isPresent()) {
             return null;
         }
 
@@ -85,7 +87,7 @@ public class DtoConstructorFieldBuilder extends AbstractGeneratorContext {
     private ClassName resolveRelation(VariableElement field) {
         var fieldClass = (TypeElement) getEnv().getTypeUtils().asElement(field.asType());
 
-        if (fieldClass == null || fieldClass.getAnnotation(GenerateDto.class) == null) {
+        if (fieldClass == null || !AnnotationWrapper.of(fieldClass, GenerateDto.class).isPresent()) {
             return null;
         }
         var dtoType = GeneratorNameResolver.resolveDtoName(fieldClass);

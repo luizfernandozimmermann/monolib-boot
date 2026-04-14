@@ -1,15 +1,15 @@
 package monolib.data.mapper.impl;
 
-import monolib.data.mapper.FieldMapper;
-import monolib.data.mapper.MappingExecutor;
-import monolib.data.mapper.dto.MappingContext;
-import monolib.data.mapper.factory.MappingConfigFactory;
-import monolib.data.api.model.EntityBase;
-import monolib.data.api.model.EntityDtoBase;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
+import monolib.data.api.model.EntityBase;
+import monolib.data.api.model.EntityDtoBase;
+import monolib.data.mapper.FieldMapper;
+import monolib.data.mapper.MappingExecutor;
+import monolib.data.mapper.dto.MappingContext;
+import monolib.data.mapper.factory.MappingConfigFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,20 +33,28 @@ public class MappingExecutorImpl implements MappingExecutor {
     public <E extends EntityBase, D extends EntityDtoBase> E executeDtoToEntity(D dto, Class<E> entityClass) {
         var entity = entityClass.getDeclaredConstructor().newInstance();
         var context = new MappingContext(MAX_DEPTH);
+        return executeDtoToEntity(dto, entity, context);
+    }
+
+    private <E extends EntityBase, D extends EntityDtoBase> E executeDtoToEntity(D dto, E entity, MappingContext context) {
         context.register(dto, entity);
-        var config = mappingConfigFactory.updateEntity(entityClass, dto, entity, context);
+        var config = mappingConfigFactory.updateEntity(dto, entity, context, this::executeDtoToEntity);
         config.setIncludeNonUpdatable(true);
         fieldMapper.mapFields(config);
         return entity;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <E extends EntityBase, D extends EntityDtoBase> void executeUpdate(D dto, E entity) {
         var context = new MappingContext(MAX_DEPTH);
+        executeUpdate(dto, entity, context);
+    }
+
+    private <E extends EntityBase, D extends EntityDtoBase> E executeUpdate(D dto, E entity, MappingContext context) {
         context.register(dto, entity);
-        var config = mappingConfigFactory.updateEntity((Class<E>) entity.getClass(), dto, entity, context);
+        var config = mappingConfigFactory.updateEntity(dto, entity, context, this::executeUpdate);
         fieldMapper.mapFields(config);
+        return entity;
     }
 
     @Override
@@ -59,16 +67,18 @@ public class MappingExecutorImpl implements MappingExecutor {
     }
 
     @Override
-    @SneakyThrows
-    @SuppressWarnings("unchecked")
     public <E extends EntityBase> Map<String, Object> executeEntityToDto(E entity, Collection<String> fields) {
+        var context = new MappingContext(MAX_DEPTH);
+        return executeEntityToDto(entity, fields, context);
+    }
+
+    private <E extends EntityBase> Map<String, Object> executeEntityToDto(E entity, Collection<String> fields, MappingContext context) {
         if (entity == null) {
             return Map.of();
         }
         var dto = new HashMap<String, Object>();
-        MappingContext context = new MappingContext(MAX_DEPTH);
         context.register(entity, dto);
-        var config = mappingConfigFactory.entityToDto((Class<E>) entity.getClass(), entity, dto, context, fields, this::executeEntityToDto);
+        var config = mappingConfigFactory.entityToDto(entity, dto, context, fields, this::executeEntityToDto);
         fieldMapper.mapFields(config);
         return dto;
     }

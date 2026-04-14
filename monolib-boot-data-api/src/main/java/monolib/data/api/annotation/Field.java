@@ -10,8 +10,12 @@ import java.lang.annotation.Target;
 public @interface Field {
 
     boolean accessible() default true;
-
     boolean softDelete() default false;
 
     boolean updatable() default true;
+    boolean notNull() default false;
+    int minLength() default 0;
+    int maxLength() default Integer.MAX_VALUE;
+    String regexp() default "";
+
 }

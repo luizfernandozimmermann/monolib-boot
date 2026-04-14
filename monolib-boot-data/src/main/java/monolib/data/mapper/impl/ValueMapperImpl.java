@@ -1,19 +1,17 @@
 package monolib.data.mapper.impl;
 
-import monolib.data.mapper.CollectionMapper;
-import monolib.data.mapper.NestedMapper;
-import monolib.data.mapper.ValueMapper;
-import monolib.data.mapper.dto.MappingConfig;
-import monolib.data.api.model.EntityBase;
-import monolib.data.utils.TypeUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import monolib.data.api.model.EntityBase;
+import monolib.data.api.model.EntityDtoBase;
+import monolib.data.mapper.CollectionMapper;
+import monolib.data.mapper.NestedMapper;
+import monolib.data.mapper.ValueMapper;
+import monolib.data.mapper.dto.FieldMappingContext;
+import monolib.data.utils.TypeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Field;
-import java.util.Collection;
 
 @Component
 @AllArgsConstructor(onConstructor_ = @__(@Autowired))
@@ -25,12 +23,13 @@ public class ValueMapperImpl implements ValueMapper {
     CollectionMapper collectionMapper;
 
     @Override
-    public Object map(Field sourceField, Object value, MappingConfig<?, ?, ?> config) {
+    public Object map(FieldMappingContext fieldContext) {
+        var value = fieldContext.getSourceValue();
         if (value == null) {
             return null;
         }
 
-        if (config.getContext().isMaxDepthReached()) {
+        if (fieldContext.isMaxDepthReached()) {
             return null;
         }
 
@@ -39,11 +38,12 @@ public class ValueMapperImpl implements ValueMapper {
         }
 
         if (TypeUtils.isCollection(value.getClass())) {
-            return collectionMapper.mapCollection(sourceField, (Collection<?>) value, config);
+            return collectionMapper.mapCollection(fieldContext);
         }
 
-        if (EntityBase.class.isAssignableFrom(value.getClass())) {
-            return nestedMapper.mapNested(sourceField, value, config);
+        if (EntityDtoBase.class.isAssignableFrom(value.getClass())
+                || EntityBase.class.isAssignableFrom(value.getClass())) {
+            return nestedMapper.mapNested(fieldContext, value);
         }
 
         return value;

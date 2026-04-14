@@ -28,6 +28,10 @@ public class ParseValue {
         return String.valueOf(input.charAt(pos));
     }
 
+    public char getCurrentChar() {
+        return input.charAt(pos);
+    }
+
     public void skipWhiteSpace() {
         while (pos < input.length() && Character.isWhitespace(input.charAt(pos))) {
             pos++;

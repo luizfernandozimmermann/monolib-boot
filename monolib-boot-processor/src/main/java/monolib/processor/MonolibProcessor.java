@@ -10,6 +10,7 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -43,9 +44,17 @@ public class MonolibProcessor extends AbstractProcessor {
     }
 
     private void process(TypeElement entity) {
-        generators.stream()
-                .filter(generator -> generator.supports(entity))
-                .forEach(generator -> generator.generate(entity, processingEnv));
+        try {
+            generators.stream()
+                    .filter(generator -> generator.supports(entity))
+                    .forEach(generator -> generator.generate(entity, processingEnv));
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(
+                    Diagnostic.Kind.NOTE,
+                    e.getMessage()
+            );
+            throw e;
+        }
     }
 
 }

@@ -1,10 +1,9 @@
 package monolib.data.mapper.dto;
 
-import monolib.data.mapper.NestedMappingFunction;
-import monolib.data.api.model.EntityBase;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import monolib.data.api.model.EntityBase;
 
 import java.util.Collection;
 import java.util.Map;
@@ -20,7 +19,7 @@ public class MappingConfig<E extends EntityBase, S, T> {
     @Setter
     private boolean includeNonUpdatable;
     private MappingContext context;
-    private NestedMappingFunction nestedMappingFunction;
+    private NestedMappingFunction<?, ?, ?> nestedMappingFunction;
 
     public boolean shouldMap(String field) {
         return projection == null || projection.shouldMap(field);

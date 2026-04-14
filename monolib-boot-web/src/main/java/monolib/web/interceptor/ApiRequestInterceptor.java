@@ -1,4 +1,4 @@
-package monolib.web.aspect;
+package monolib.web.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,7 +29,7 @@ import java.util.Objects;
 @Component
 @AllArgsConstructor(onConstructor_ = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ApiRequestAspect implements HandlerInterceptor {
+public class ApiRequestInterceptor implements HandlerInterceptor {
 
     RequestContext requestContext;
     

@@ -3,8 +3,6 @@ package monolib.data.domain.user.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,16 +18,12 @@ import monolib.data.api.model.LogicalEntityBase;
 @GenerateController
 public class UserEntity extends LogicalEntityBase {
 
-    @Field
+    @Field(minLength = 5, maxLength = 50)
     @Column(name = "name")
-    @NotNull
-    @Size(min = 5, max = 50)
     private String name;
 
-    @Field(updatable = false)
+    @Field(updatable = false, minLength = 5, maxLength = 100)
     @Column(name = "email")
-    @NotNull
-    @Size(min = 5, max = 100)
     private String email;
 
     @Field(updatable = false)

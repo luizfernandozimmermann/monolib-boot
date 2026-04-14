@@ -4,14 +4,20 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.TypeName;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import monolib.generator.core.AbstractGeneratorContext;
+import monolib.generator.core.AnnotationWrapper;
 import monolib.generator.core.GeneratorContext;
+import monolib.generator.data.ValidationParams;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DtoConstructorFieldAnnotationBuilder extends AbstractGeneratorContext {
@@ -20,19 +26,56 @@ public class DtoConstructorFieldAnnotationBuilder extends AbstractGeneratorConte
         super(context);
     }
 
-    public AnnotationSpec build(AnnotationMirror mirror) {
-        var builder = AnnotationSpec.builder(ClassName.get((TypeElement) mirror.getAnnotationType().asElement()));
-        for (var entry : getEnv().getElementUtils().getElementValuesWithDefaults(mirror).entrySet()) {
-            var name = entry.getKey().getSimpleName().toString();
-            var value = buildAnnotationValue(entry.getValue());
-            builder.addMember(name, "$L", value.toString());
+    public List<AnnotationSpec> build(AnnotationMirror mirror) {
+        var wrapper = AnnotationWrapper.of(mirror);
+        var annotation = wrapper.as(ValidationParams.class);
+        var specs = new ArrayList<AnnotationSpec>();
+        sizeValidation(specs, annotation);
+        notNullValidation(specs, annotation);
+        patternValidation(specs, annotation);
+        return specs;
+    }
+
+    private void sizeValidation(List<AnnotationSpec> specs, ValidationParams annotation) {
+        if (annotation.getMinLength() == null && annotation.getMaxLength() == null) {
+            return;
         }
-        return builder.build();
+        var builder = AnnotationSpec.builder(ClassName.get(Size.class));
+        addMember(builder, "min", annotation.getMinLength());
+        addMember(builder, "max", annotation.getMaxLength());
+        specs.add(builder.build());
+    }
+
+    private void addMember(AnnotationSpec.Builder builder, String field, Object value) {
+        if (value == null) {
+            return;
+        }
+        builder.addMember(field, buildAnnotationValue(value));
+    }
+
+    private void notNullValidation(List<AnnotationSpec> specs, ValidationParams annotation) {
+        if (!Boolean.TRUE.equals(annotation.getNotNull())) {
+            return;
+        }
+        specs.add(AnnotationSpec.builder(ClassName.get(NotNull.class)).build());
+    }
+
+    private void patternValidation(List<AnnotationSpec> specs, ValidationParams annotation) {
+        if (annotation.getRegexp() == null) {
+            return;
+        }
+        var builder = AnnotationSpec.builder(ClassName.get(Pattern.class));
+        addMember(builder, "regexp", annotation.getRegexp());
+        specs.add(builder.build());
     }
 
     private CodeBlock buildAnnotationValue(AnnotationValue annotationValue) {
         var value = annotationValue.getValue();
 
+        return buildAnnotationValue(value);
+    }
+
+    private CodeBlock buildAnnotationValue(Object value) {
         if (value instanceof String s) return literal(s);
         if (value instanceof Boolean b) return literal(b);
         if (value instanceof Number n) return literal(n);
@@ -73,7 +116,7 @@ public class DtoConstructorFieldAnnotationBuilder extends AbstractGeneratorConte
 
     private CodeBlock arrayLiteral(List<?> list) {
         var builder = CodeBlock.builder().add("{");
-        boolean first = true;
+        var first = true;
 
         for (var item : list) {
             if (!first) {

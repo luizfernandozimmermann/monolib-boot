@@ -1,6 +1,6 @@
 package monolib.web.config;
 
-import monolib.web.aspect.ApiRequestAspect;
+import monolib.web.interceptor.ApiRequestInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -19,7 +19,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     private final List<HttpMessageConverter<?>> messageConverters;
 
     @Autowired
-    private ApiRequestAspect apiRequestAspect;
+    private ApiRequestInterceptor apiRequestInterceptor;
 
     public WebConfiguration() {
         this.messageConverters = new ArrayList<>();
@@ -43,6 +43,6 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(apiRequestAspect);
+        registry.addInterceptor(apiRequestInterceptor);
     }
 }

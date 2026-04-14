@@ -10,9 +10,9 @@ public class IdentifierParser {
         parseValue.skipWhiteSpace();
         int start = parseValue.getPos();
         while (parseValue.getPos() < parseValue.getInput().length() &&
-                (Character.isLetterOrDigit(parseValue.getInput().charAt(parseValue.getPos())) ||
-                        parseValue.getInput().charAt(parseValue.getPos()) == '.' ||
-                        parseValue.getInput().charAt(parseValue.getPos()) == '_')) {
+                (Character.isLetterOrDigit(parseValue.getCurrentChar()) ||
+                        parseValue.getCurrentChar() == '.' ||
+                        parseValue.getCurrentChar() == '_')) {
             parseValue.increment();
         }
         return parseValue.getInput().substring(start, parseValue.getPos());
